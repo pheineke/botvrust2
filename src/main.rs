@@ -1,8 +1,10 @@
+mod modules;
+
 use serenity::{
     async_trait,
-    prelude::*,
+    //prelude::*,
     client::{Client, Context, EventHandler},
-    model::{channel::Message, gateway::Ready},
+    model::{channel::Message, gateway::{GatewayIntents, Ready}},
     framework::standard::{
             macros::{command, group},
             {StandardFramework, Configuration, CommandResult}
@@ -11,24 +13,34 @@ use serenity::{
 use dotenv::dotenv;
 use std::env;
 
+//MODULES//////////
+use crate::modules::modul0::*;
+
 
 #[group]
-#[commands(ping)]
+#[commands(ping,multiply)]
 struct General;
+
+
 
 struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
+    async fn message(&self, ctx: Context, msg: Message) {
+        // Hier können Sie auf eingehende Nachrichten reagieren
+    }
+
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
     }
 }
 
+
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    let token = env::var("DISCORD_TOKEN").expect("DATABASE_URL muss gesetzt sein");
+    let token = env::var("DISCORD_TOKEN").expect("DISCORD_TOKEN muss gesetzt sein");
     //////
 
     let framework = StandardFramework::new().group(&GENERAL_GROUP);
@@ -50,6 +62,5 @@ async fn main() {
 #[command]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(ctx, "Pong!").await?;
-
     Ok(())
 }
